@@ -1,0 +1,74 @@
+
+{% extends "base.html" %}
+{%block content%}
+<script>
+  $(document).ready(function() {
+    var text_max = 256;
+    $('#textarea_feedback').html(text_max + ' karakter hakkın kaldı.');
+
+    $('#textarea').keyup(function() {
+        var text_length = $('#textarea').val().length;
+        var text_remaining = text_max - text_length;
+
+        $('#textarea_feedback').html(text_remaining + ' karakter hakkın kaldı.');
+    });
+});
+</script>
+<div class="container">
+<br>
+<h1 style="text-align:center;">{{post.post}} </h1>
+<p style="font-size:small;text-align:center;">{{post.created_on}}</p>
+<button type="button" class="btn btn-secondary float-right" data-toggle="modal" data-target="#exampleModal" data-whatever="@mdo">Yorum At</button>
+<br>
+<br>
+<br>
+{% for i in commentmodel_list%}
+<h4 >{{i.comment}}</h4>
+{% if i.author_security == user%}
+<a style="float:right;color:red;" href="{% url 'forum:delete' slug=post.slug comment_id=i.id %}?next={{ request.path }}" ><i class="fas fa-minus-circle"></i></a>
+{% endif %}
+{% if i.author is none %}
+<p style="font-size:small;">Anonim | {{i.created_on}}</p>
+{% else%}
+<p style="font-size:small;"><a style="text-decoration:none;" href="#">@{{i.author}}</a> | {{i.created_on}}</p>
+{% endif %}
+
+<hr>
+<br>
+{% endfor %}
+</div>
+
+
+<div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+ <div class="modal-dialog" role="document">
+	 <div class="modal-content">
+		 <div class="modal-body">
+       {%if user.is_authenticated%}
+			 <form method="post" style="margin-top: 1.3em;">
+				 {% csrf_token %}
+         <label for="comment">Yorum:</label>
+         <br>
+         <textarea id="textarea" maxlength="256"name="comment" rows="8" cols="50"></textarea>
+         <div id="textarea_feedback"></div>
+				 <br>
+				 <br>
+				 <input type="checkbox" name="anonn" id="anonn">
+				 <label for="anonn">Anonim olarak yorum atmak için Tıkla!</label>
+				 <div class="modal-footer">
+					 <button type="submit" class="btn btn-primary">Paylaş</button>
+					 <button type="submit" class="btn btn-secondary" data-dismiss="modal">Kapat</button>
+				 </div>
+			 </form>
+       {%else%}
+       <p style="text-align:center;">Yorum atmak için <a style="text-decoration:none;" href="{% url 'account:login' %}?next={{ request.path }}">Giriş</a> yapmalısın.</p>
+       {% endif %}
+		 </div>
+	 </div>
+ </div>
+</div>
+
+
+
+
+
+{% endblock content%}

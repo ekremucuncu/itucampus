@@ -1,0 +1,68 @@
+{% extends "base.html" %}
+{%block content%}
+<script>
+  $(document).ready(function() {
+    var text_max = 400;
+    $('#textarea_feedback').html(text_max + ' karakter hakkın kaldı.');
+
+    $('#textarea').keyup(function() {
+        var text_length = $('#textarea').val().length;
+        var text_remaining = text_max - text_length;
+
+        $('#textarea_feedback').html(text_remaining + ' karakter hakkın kaldı.');
+    });
+});
+</script>
+<div class="container">
+  <br>
+  <h1 style="text-align:center;">İLANLAR</h1>
+  <hr>
+  <p style="text-align:center;">Burada 2.el ürünlerini satabilir; kullanmadığın okul malzemelerini (kitap, önlük, cetvel) hediye edebilir; ev ilanı verebilir, ev için eşya arayabilir veya ev arkadaşı arayabilirsin.</p>
+</div>
+
+<div class="container">
+ <button type="button" class="btn btn-secondary float-right" data-toggle="modal" data-target="#exampleModal" data-whatever="@mdo">İlan Ver</button>
+ <br>
+  {%for i in ad_list%}
+    <h4 >{{i.title}}</h4>
+    <p style="font-size:small;"><a style="text-decoration:none;" href="#">@{{i.author}}</a> | {{i.created_on}}</p>
+    <p class="card-text">{{i.body}}</p>
+    <hr>
+<br>
+  {% endfor %}
+</div>
+
+
+
+<div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+ <div class="modal-dialog" role="document">
+	 <div class="modal-content">
+		 <div class="modal-header">
+			 <h5 class="modal-title" id="exampleModalLabel">İlan</h5>
+		 </div>
+		 <div class="modal-body">
+       {%if user.is_authenticated%}
+			 <form method="post" style="margin-top: 1.3em;">
+				 {% csrf_token %}
+         <label for="title">Başlık:</label>
+         <br>
+         <input type="text" name="title" size="47" maxlength="128">
+         <br>
+         <br>
+         <label for="body">İlan Açıklaması:</label>
+				 ​<textarea id="textarea" name="body" rows="10" cols="50" maxlength="400"></textarea>
+         <div id="textarea_feedback"></div>
+				 <br>
+				 <div class="modal-footer">
+					 <button type="submit" class="btn btn-primary">İlan Ver</button>
+					 <button type="submit" class="btn btn-secondary" data-dismiss="modal">Kapat</button>
+				 </div>
+			 </form>
+       {%else%}
+       <p style="text-align:right;">İlan vermek için <a style="text-decoration:none;" href="{% url 'account:login' %}?next={{ request.path }}">Giriş</a> yapmalısın.</p>
+       {% endif %}
+		 </div>
+	 </div>
+ </div>
+</div>
+{% endblock content%}

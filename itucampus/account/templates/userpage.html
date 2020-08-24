@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+{%block content%}
+{% load static %}
+<div class="container">
+	<br>
+    <h1 style="text-align:center;text-transform:uppercase;">{{user.username}}</h1>
+		<p style="text-align:center;">{{user.email}}</p>
+		<hr>
+		<input style="float: right;clear: both;" type="select" name="secim" value="ekrem">
+		<br><br><br>
+		<h2 style="text-align:center;"">İLANLAR</h2>
+		{%for i in posts%}
+		<p style="text-align:center;">{{i.post}}</p>
+		{% endfor %}
+</div>
+
+
+
+
+
+
+{% endblock content%}

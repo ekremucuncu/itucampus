@@ -1,0 +1,75 @@
+{% extends "base.html" %}
+{%block content%}
+
+
+
+
+<script>
+  $(document).ready(function() {
+    var text_max = 400;
+    $('#textarea_feedback').html(text_max + ' karakter hakkın kaldı.');
+
+    $('#textarea').keyup(function() {
+        var text_length = $('#textarea').val().length;
+        var text_remaining = text_max - text_length;
+
+        $('#textarea_feedback').html(text_remaining + ' karakter hakkın kaldı.');
+    });
+});
+</script>
+<div class="container">
+<br>
+<h1 style="text-align:center;">{{question.title}} </h1>
+<p style="font-size:small;text-align:center;"><a href="#">@{{question.author}}</a> | {{question.created_on}}</p>
+{% if question.question%}<img style="max-width:1000px;display:block;margin-left:auto; margin-right:auto;"src="{{question.question.url}}" alt="">{%endif%}
+<br>
+<p style="font-size:large;	text-align:center">{{question.body}}</p>
+<button type="button" class="btn btn-secondary float-right" data-toggle="modal" data-target="#exampleModal" data-whatever="@mdo">Çözüm At</button>
+<br><br><br><br><br>
+{% for i in answermodel_list%}
+<hr>{% if i.answer%}<img style="max-width:500px;display:block;margin-left:auto; margin-right:auto;"src="{{i.answer.url}}" alt=""><br>{%endif%}
+<h4 >{{i.body}}</h4>
+{% if i.author_security == user%}
+<a style="float:right;color:red;" href="{% url 'forum:delete' slug=post.slug comment_id=i.id %}?next={{ request.path }}" ><i class="fas fa-minus-circle"></i></a>
+{% endif %}
+{% if i.author is none %}
+<p style="font-size:small;">Anonim | {{i.created_on}}</p>
+{% else%}
+<p style="font-size:small;"><a style="text-decoration:none;" href="#">@{{i.author}}</a> | {{i.created_on}}</p>
+{% endif %}
+
+<br>
+{% endfor %}
+</div>
+
+<div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+ <div class="modal-dialog" role="document">
+	 <div class="modal-content">
+		 <div class="modal-body">
+       {%if user.is_authenticated%}
+			 <form method="post" style="margin-top: 1.3em;" enctype="multipart/form-data">
+				 {% csrf_token %}
+				 <label for="body">Cevap:</label>
+				 <br>
+				 <textarea id="textarea" name="body" rows="8" cols="50" maxlength="400"></textarea>
+         <div id="textarea_feedback"></div>
+         <br>
+         <input type="file" name="answer" accept="image/*" id="id_answer">
+				 <div class="modal-footer">
+					 <button type="submit" class="btn btn-primary">Paylaş</button>
+					 <button type="submit" class="btn btn-secondary" data-dismiss="modal">Kapat</button>
+				 </div>
+			 </form>
+       {%else%}
+       <p style="text-align:center;">Soru sormak için <a style="text-decoration:none;" href="{% url 'account:login' %}?next={{ request.path }}">Giriş</a> yapmalısın.</p>
+       {% endif %}
+		 </div>
+	 </div>
+ </div>
+</div>
+
+
+
+
+
+{% endblock content%}

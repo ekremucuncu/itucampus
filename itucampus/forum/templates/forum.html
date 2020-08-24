@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+{%block content%}
+
+
+<div class="container">
+	<br>
+	<h1 style="text-align:center;">FORUM</h1>
+	<hr>
+	<button type="button" class="btn btn-secondary float-right" data-toggle="modal" data-target="#exampleModal" data-whatever="@mdo">Başlık Oluştur</button>
+	<br>
+	<br>
+{% for i in postmodel_list%}
+<a style="text-decoration:none;color:black;"href="{% url 'forum:post_detail' slug=i.slug%}">
+<div style="margin:auto;" class="card col-lg-6">
+  <div class="card-body">
+    {{i.post}}
+  </div>
+</div>
+</a>
+<br>
+{% endfor %}
+</div>
+
+
+<div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+ <div class="modal-dialog" role="document">
+	 <div class="modal-content">
+		 <div class="modal-body">
+       {%if user.is_authenticated%}
+			 <form method="post" style="margin-top: 1.3em;">
+				 {% csrf_token %}
+         <label for="post">Başlık:</label>
+         <br>
+         <input maxlength="64" type="text" name="post" size=50>
+				 <div class="modal-footer">
+					 <button type="submit" class="btn btn-primary">Paylaş</button>
+					 <button type="submit" class="btn btn-secondary" data-dismiss="modal">Kapat</button>
+				 </div>
+			 </form>
+       {%else%}
+       <p style="text-align:center;">Başlık oluşturmak için <a style="text-decoration:none;" href="{% url 'account:login' %}?next={{ request.path }}">Giriş</a> yapmalısın.</p>
+       {% endif %}
+		 </div>
+	 </div>
+ </div>
+</div>
+{% endblock content%}

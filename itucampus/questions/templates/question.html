@@ -1,0 +1,95 @@
+{% extends "base.html" %}
+{%block content%}
+
+<script>
+  $(document).ready(function() {
+    var text_max = 400;
+    $('#textarea_feedback').html(text_max + ' karakter hakkın kaldı.');
+
+    $('#textarea').keyup(function() {
+        var text_length = $('#textarea').val().length;
+        var text_remaining = text_max - text_length;
+
+        $('#textarea_feedback').html(text_remaining + ' karakter hakkın kaldı.');
+    });
+});
+</script>
+
+<div class="container">
+	<br>
+<h1 style="text-align:center;">SORULAR</h1>
+<hr>
+<p style="text-align:center;">Çözemediğin soruları, dersle alakalı veya alakasız, buraya atabilir diğer öğrencilere yardımcı olabilirsin.</p>
+
+<button type="button" class="btn btn-secondary float-right" data-toggle="modal" data-target="#exampleModal" data-whatever="@mdo">Soru Sor</button>
+
+{%for i in question_list%}
+<div class=""><a style="text-decoration:none;color:black;" href="{% url 'question:question_detail' slug=i.slug%}">
+	<br><br>
+	{% if i.question%}
+	<img src="{{ i.question.url }}">
+	<br>
+	<h2>{{i.title}}</h2>
+	<br>
+	<p >{{i.body}}</p>
+	<p style="font-size:small;"><a style="text-decoration:none;" href="#">@{{i.author}}</a> | {{i.created_on}}</p>
+	<br><br><br><br><br><br><br><br><hr>
+	{% else %}
+	<h2>{{i.title}}</h2>
+	<br>
+	<p >{{i.body}}</p>
+	<p style="font-size:small;"><a style="text-decoration:none;" href="#">@{{i.author}}</a> | {{i.created_on}}</p>
+
+	<br>
+	<hr>
+	{% endif %}
+
+
+</a></div>
+{% endfor %}
+
+<div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+ <div class="modal-dialog" role="document">
+	 <div class="modal-content">
+		 <div class="modal-body">
+       {%if user.is_authenticated%}
+			 <form method="post" style="margin-top: 1.3em;" enctype="multipart/form-data">
+				 {% csrf_token %}
+         <label for="post">Başlık:</label>
+         <br>
+         <input type="text" name="title" size=50 maxlength="128">
+				 <br><br>
+				 <label for="body">Soru:</label>
+				 <br>
+				 <textarea id="textarea" maxlength="400" name="body" rows="8" cols="50"></textarea>
+				 <div id="textarea_feedback"></div>
+				 <br>
+				 <input type="file" name="question" accept="image/*" id="id_question">
+				 <div class="modal-footer">
+					 <button type="submit" class="btn btn-primary">Paylaş</button>
+					 <button type="submit" class="btn btn-secondary" data-dismiss="modal">Kapat</button>
+				 </div>
+			 </form>
+       {%else%}
+       <p style="text-align:center;">Soru sormak için <a style="text-decoration:none;" href="{% url 'account:login' %}?next={{ request.path }}">Giriş</a> yapmalısın.</p>
+       {% endif %}
+		 </div>
+	 </div>
+ </div>
+</div>
+</div>
+
+
+<style >
+	img {
+		float:right;
+		width:  500px;
+		height: 350px;
+		object-fit: fill;
+		margin:20px;
+	}
+
+</style>
+
+
+{% endblock content%}

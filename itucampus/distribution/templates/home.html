@@ -1,0 +1,107 @@
+{% extends "base.html" %}
+{%block content%}
+{% load crispy_forms_tags %}
+
+<div class="container">
+
+	<h1 style="text-align:center;">Not Dağılımları</h1>
+	<hr>
+</div>
+<div class="container">
+
+		<div class="form-group pull-right">
+    <input type="text" class="search form-control" placeholder="Ara">
+		</div>
+		<span class="counter pull-right"></span>
+		<table style="background-color:white;"class="table table-hover results">
+  	<thead>
+    	<tr>
+      	<th >Hoca</th>
+				<th>Fakülte</th>
+      	<th >Ders</th>
+    	</tr>
+    	<tr class="warning no-result">
+      	<td><i class="fa fa-warning"></i> Sonuç Yok</td>
+    	</tr>
+  	</thead>
+  	<tbody>
+			{%for lec in lecturer_list%}
+    	<tr>
+      	<td>
+					<p ><a style="text-decoration:none;color:#002855;" href="{% url 'distribution:lecturer_distribution' slug=lec.slug%}">{{lec.lecturer}}</a></p>
+      	</td>
+				<td>
+						<p>{{lec.faculty}}</p>
+				</td>
+      	<td style="color:white;">
+					{%for ders in lec.lecture.all%}
+						<a style="text-decoration:none;color:#002855;" href="{% url 'distribution:lecture_distribution' slug=ders.slug%}">{{ders.lecture}}</a>,
+					{% endfor%}
+				</td>
+    	</tr>
+			{%endfor%}
+  	</tbody>
+</table>
+</div>
+
+
+
+
+
+<style >
+		body{
+  padding:20px 20px;
+}
+
+.results tr[visible='false'],
+.no-result{
+  display:none;
+}
+
+.results tr[visible='true']{
+  display:table-row;
+}
+
+.counter{
+  padding:8px;
+  color:#ccc;
+}
+
+
+th,p{
+	color:black;
+}
+
+	</style>
+
+<script>
+	$(document).ready(function() {
+  $(".search").keyup(function () {
+    var searchTerm = $(".search").val();
+    var listItem = $('.results tbody').children('tr');
+    var searchSplit = searchTerm.replace(/ /g, "'):containsi('")
+
+  $.extend($.expr[':'], {'containsi': function(elem, i, match, array){
+        return (elem.textContent || elem.innerText || '').toLowerCase().indexOf((match[3] || "").toLowerCase()) >= 0;
+    }
+  });
+
+  $(".results tbody tr").not(":containsi('" + searchSplit + "')").each(function(e){
+    $(this).attr('visible','false');
+  });
+
+  $(".results tbody tr:containsi('" + searchSplit + "')").each(function(e){
+    $(this).attr('visible','true');
+  });
+
+  var jobCount = $('.results tbody tr[visible="true"]').length;
+
+  if(jobCount == '0') {$('.no-result').show();}
+    else {$('.no-result').hide();}
+		  });
+});
+</script>
+
+
+
+{% endblock content%}
