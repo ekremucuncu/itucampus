@@ -137,7 +137,6 @@ MEDIA_URL = '/media/'
 
 EMAIL_USE_TLS = True
 EMAIL_HOST = 'smtp.gmail.com'
-EMAIL_HOST_USER = 'itutakipcidestek@gmail.com'
-EMAIL_HOST_PASSWORD = 'takipciler321.'
+
 DEFAULT_FROM_EMAIL = 'İTÜ Takipçi Team <noreply@itutakipcidestek.com>'
 EMAIL_PORT = 587
